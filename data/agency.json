@@ -1,0 +1,177 @@
+{
+  "_note": "Harbourside Realty is a fictional agency. Every listing, name and address here is made up for the demo. Set line_agent to answer one agent's mobile when they can't pick up; remove it to answer as the agency's reception.",
+  "name": "Harbourside Realty",
+  "city": "Sydney",
+  "line_agent": "Sophie Tran",
+  "timezone": "Australia/Sydney",
+  "office": {
+    "address": "Shop 4, 21 Wharf Lane, Sydney NSW",
+    "hours": {
+      "Mon": [
+        "09:00",
+        "17:30"
+      ],
+      "Tue": [
+        "09:00",
+        "17:30"
+      ],
+      "Wed": [
+        "09:00",
+        "17:30"
+      ],
+      "Thu": [
+        "09:00",
+        "17:30"
+      ],
+      "Fri": [
+        "09:00",
+        "17:30"
+      ],
+      "Sat": [
+        "09:00",
+        "13:00"
+      ]
+    }
+  },
+  "agents": [
+    {
+      "name": "Sophie Tran",
+      "role": "Sales agent",
+      "handles": "sales"
+    },
+    {
+      "name": "Marcus Webb",
+      "role": "Property manager",
+      "handles": "rentals"
+    }
+  ],
+  "private_inspections": {
+    "days": [
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri"
+    ],
+    "start": "10:00",
+    "end": "17:00",
+    "slot_minutes": 30,
+    "min_notice_hours": 24,
+    "days_ahead": 14
+  },
+  "listings": [
+    {
+      "id": "HR-101",
+      "kind": "sale",
+      "address": "7/42 Bayview Street, Lavender Bay",
+      "suburb": "Lavender Bay",
+      "bedrooms": 2,
+      "bathrooms": 2,
+      "parking": 1,
+      "price": "Guide $1,450,000 to $1,550,000",
+      "price_spoken": "one point four five to one point five five million dollars",
+      "summary": "North-facing apartment with harbour glimpses, renovated kitchen, internal laundry and a secure car space. Four minutes' walk to North Sydney station.",
+      "strata_per_quarter": "$1,680",
+      "open_homes": [
+        {
+          "day": "Sat",
+          "start": "10:00",
+          "end": "10:30"
+        },
+        {
+          "day": "Wed",
+          "start": "17:30",
+          "end": "18:00"
+        }
+      ],
+      "agent": "Sophie Tran"
+    },
+    {
+      "id": "HR-102",
+      "kind": "sale",
+      "address": "18 Kendall Road, Willoughby",
+      "suburb": "Willoughby",
+      "bedrooms": 4,
+      "bathrooms": 2,
+      "parking": 2,
+      "price": "Auction on Saturday 31 October; guide on request from the agent",
+      "summary": "Family home on 650 square metres with a level backyard, north-facing living, a separate study and a double garage. In the Willoughby Public School catchment.",
+      "open_homes": [
+        {
+          "day": "Sat",
+          "start": "11:00",
+          "end": "11:30"
+        },
+        {
+          "day": "Thu",
+          "start": "17:00",
+          "end": "17:30"
+        }
+      ],
+      "agent": "Sophie Tran"
+    },
+    {
+      "id": "HR-201",
+      "kind": "rent",
+      "address": "12/9 Albert Avenue, Chatswood",
+      "suburb": "Chatswood",
+      "bedrooms": 1,
+      "bathrooms": 1,
+      "parking": 0,
+      "price": "$720 per week",
+      "price_spoken": "seven hundred and twenty dollars a week",
+      "summary": "Bright one-bedroom apartment on level 6 with a balcony, gym in the building, and Chatswood station and Westfield two minutes away. Available from 1 November. Pets considered on application.",
+      "open_homes": [
+        {
+          "day": "Sat",
+          "start": "12:00",
+          "end": "12:15"
+        }
+      ],
+      "agent": "Marcus Webb"
+    },
+    {
+      "id": "HR-202",
+      "kind": "rent",
+      "address": "3 Ferry Street, Hunters Hill",
+      "suburb": "Hunters Hill",
+      "bedrooms": 3,
+      "bathrooms": 2,
+      "parking": 1,
+      "price": "$1,150 per week",
+      "price_spoken": "eleven hundred and fifty dollars a week",
+      "summary": "Updated semi with a courtyard garden, gas cooking, ducted air conditioning and a lock-up garage. Walk to the ferry wharf. Available now; 12-month lease preferred.",
+      "open_homes": [
+        {
+          "day": "Sat",
+          "start": "09:30",
+          "end": "09:45"
+        },
+        {
+          "day": "Tue",
+          "start": "17:15",
+          "end": "17:30"
+        }
+      ],
+      "agent": "Marcus Webb"
+    }
+  ],
+  "faq": [
+    {
+      "q": "How do I apply for a rental?",
+      "a": "Apply online through the link on the listing after inspecting. Applications are usually processed within two business days."
+    },
+    {
+      "q": "Do you do free market appraisals?",
+      "a": "Yes. A sales agent can visit for a free appraisal. Ask for the property address (and their name and number only if you don't already have them), then leave a message for Sophie, who will call back to book it."
+    },
+    {
+      "q": "Can I get the contract of sale?",
+      "a": "Yes. Get their email (and name if you don't have it yet) and leave a message; the agent sends the contract the same day."
+    },
+    {
+      "q": "Where are you located?",
+      "a": "The office is at Shop 4, 21 Wharf Lane, Sydney."
+    }
+  ]
+}

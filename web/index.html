@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>__AGENCY__ · AI call assistant demo</title>
+<style>
+  :root { --bg:#f6f3ee; --ink:#1c1a17; --mute:#6f6a62; --line:#e2ddd4; --accent:#1f3a34; --gold:#a8864b; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif; }
+  main { max-width:760px; margin:0 auto; padding:48px 20px 64px; }
+  .eyebrow { font:600 12px/1 system-ui; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); }
+  h1 { font:600 40px/1.1 Georgia,"Times New Roman",serif; margin:12px 0 10px; }
+  p.lead { color:var(--mute); margin:0 0 28px; max-width:56ch; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:18px; padding:24px; box-shadow:0 18px 40px rgba(30,25,20,.06); }
+  .row { display:flex; align-items:center; gap:16px; flex-wrap:wrap; }
+  button { font:600 16px system-ui; border:0; border-radius:999px; padding:14px 26px; cursor:pointer; background:var(--accent); color:#fff; }
+  button.end { background:#8c2f22; }
+  button:disabled { opacity:.5; cursor:default; }
+  .status { color:var(--mute); font-size:14px; }
+  .meter { width:120px; height:6px; background:var(--line); border-radius:6px; overflow:hidden; }
+  .meter i { display:block; height:100%; width:0; background:var(--gold); transition:width .08s; }
+  #log { margin-top:20px; display:flex; flex-direction:column; gap:10px; max-height:340px; overflow:auto; }
+  .msg { padding:10px 14px; border-radius:14px; max-width:85%; }
+  .assistant { background:#eef2f0; align-self:flex-start; }
+  .user { background:var(--accent); color:#fff; align-self:flex-end; }
+  .try { margin-top:28px; color:var(--mute); font-size:14px; }
+  .try li { margin:4px 0; }
+  .note { margin-top:18px; font-size:13px; color:var(--mute); }
+  .cid { margin-top:14px; font-size:14px; color:var(--mute); display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+  .cid input { font:15px system-ui; padding:8px 12px; border:1px solid var(--line); border-radius:10px; width:190px; max-width:100%; }
+</style>
+</head>
+<body>
+<main>
+  <div class="eyebrow">Live demo · voice AI</div>
+  <h1>The calls your agents can't pick up</h1>
+  <p class="lead">When an agent is with a client, at an open home or in an appraisal, this AI assistant answers their phone: it answers questions about listings, books inspections and takes the details so the agent can call straight back. Click the button, allow your microphone, and talk to it like a real caller.</p>
+
+  <div class="card">
+    <div class="row">
+      <button id="start">Start call</button>
+      <button id="stop" class="end" hidden>End call</button>
+      <div class="meter" title="Assistant speaking"><i id="level"></i></div>
+      <span class="status" id="status">Ready</span>
+    </div>
+    <label class="cid">Pretend caller ID (optional, a real phone line has this):
+      <input id="callerid" inputmode="tel" placeholder="e.g. 0412 345 678"></label>
+    <div id="log" aria-live="polite"></div>
+  </div>
+
+  <div class="try">
+    Things to try:
+    <ul>
+      <li>"Hi, I'm calling about the apartment in Lavender Bay. What's the price guide?"</li>
+      <li>"When can I inspect the Willoughby house? Can you book me in for Saturday?"</li>
+      <li>"I'd like a free appraisal of my place."</li>
+      <li>"I want to put an offer in on the Willoughby house."</li>
+    </ul>
+  </div>
+  <p class="note">The agency, listings and agents are fictional. Calls are capped at a few minutes.</p>
+</main>
+
+<script type="module">
+  const PUBLIC_KEY = "__VAPI_PUBLIC_KEY__";      // Vapi public key (safe for web pages)
+  const ASSISTANT_ID = "__VAPI_ASSISTANT_ID__";
+  const FIRST_MESSAGE = "__FIRST_MESSAGE__";
+
+  const $ = (id) => document.getElementById(id);
+  const log = $("log"), status = $("status");
+  // The log shows what the assistant actually wrote, plus a live line for the caller.
+  let committed = [], live = "";
+  const render = () => {
+    log.innerHTML = "";
+    const add = (role, text) => {
+      const d = document.createElement("div");
+      d.className = "msg " + role; d.textContent = text; log.appendChild(d);
+    };
+    committed.forEach((m) => add(m.role, m.content));
+    if (live) add("user", live);
+    log.scrollTop = log.scrollHeight;
+  };
+  if (PUBLIC_KEY.startsWith("__") || ASSISTANT_ID.startsWith("__")) {
+    $("start").disabled = true;
+    status.textContent = "Set VAPI_PUBLIC_KEY and VAPI_ASSISTANT_ID to enable calls.";
+  } else {
+    const mod = await import("https://cdn.jsdelivr.net/npm/@vapi-ai/web@2.7.1/+esm");
+    const Vapi = typeof mod.default === "function" ? mod.default : mod.default.default;  // CommonJS build wrapped as ESM
+    const vapi = new Vapi(PUBLIC_KEY);
+    $("start").onclick = async () => {
+      $("start").disabled = true; status.textContent = "Connecting…"; committed = []; live = ""; render();
+      const overrides = { maxDurationSeconds: 240 };
+      const cid = $("callerid").value.trim();
+      if (cid) overrides.variableValues = { caller_id: cid };
+      try { await vapi.start(ASSISTANT_ID, overrides); }
+      catch (e) { status.textContent = "Couldn't start the call: " + (e.message || e); $("start").disabled = false; }
+    };
+    $("stop").onclick = () => vapi.stop();
+    // The assistant's lines come from the model's own words as they stream ("model-output"), never from
+    // speech-to-text of its voice, which turns "one point four five million" into "1.45". The caller's
+    // lines come from speech-to-text. If model-output never arrives, fall back to transcripts.
+    let sawModel = false, userTurns = 0, current = null;
+    vapi.on("call-start", () => {
+      status.textContent = "Connected. Start talking."; $("start").hidden = true; $("stop").hidden = false;
+      sawModel = false; userTurns = 0; current = null;
+      committed = [{ role: "assistant", content: FIRST_MESSAGE }]; render();
+    });
+    vapi.on("call-end", () => { status.textContent = "Call ended"; $("start").hidden = false; $("start").disabled = false; $("stop").hidden = true; $("level").style.width = "0"; });
+    vapi.on("volume-level", (v) => { $("level").style.width = Math.min(100, v * 160) + "%"; });
+    vapi.on("message", (m) => {
+      if (m.type === "model-output") {
+        if (typeof m.output !== "string" || !m.output) return;
+        sawModel = true;
+        if (!current) { current = { role: "assistant", content: "" }; committed.push(current); }
+        // a new reply after a tool call starts without a leading space
+        if (/[.!?]$/.test(current.content) && !/^\s/.test(m.output)) current.content += " ";
+        current.content += m.output; render();
+      } else if (m.type === "transcript") {
+        if (m.role !== "assistant") {
+          if (m.transcriptType !== "final") { live = m.transcript; render(); return; }
+          live = ""; current = null; userTurns += 1;
+          const last = committed[committed.length - 1];
+          if (last && last.role === "user") last.content += " " + m.transcript;  // same turn, said in pieces
+          else committed.push({ role: "user", content: m.transcript });
+          render();
+        } else if (m.transcriptType === "final" && !sawModel && userTurns > 0) {
+          committed.push({ role: "assistant", content: m.transcript }); render();
+        }
+      }
+    });
+    vapi.on("error", (e) => { status.textContent = "Error: " + (e?.error?.message || e?.message || "see console"); console.error(e); });
+  }
+</script>
+</body>
+</html>
