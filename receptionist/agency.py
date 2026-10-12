@@ -49,7 +49,7 @@ _DIGITS = "zero one two three four five six seven eight nine".split()
 
 
 def spoken_phone(phone: str) -> str:
-    """'0404154887' -> 'zero four zero four, one five four, eight eight seven'.
+    """'0491570157' -> 'zero four nine one, five seven zero, one five seven'.
     Spelled out so the voice reads it digit by digit, the way a person would, never as
     'eight hundred and eighty-seven'."""
     d = re.sub(r"\D", "", phone or "")
