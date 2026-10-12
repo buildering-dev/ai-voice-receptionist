@@ -107,21 +107,21 @@ def test_made_up_or_past_times_are_refused(tools):
 
 
 def test_caller_id_is_offered_not_used_silently(tools):
-    ctx = {"caller_number": "+61 412 345 678", "call_id": "c1"}
+    ctx = {"caller_number": "+61 491 570 156", "call_id": "c1"}
     first = tools.call("get_listing_details", {"query": "Chatswood"}, ctx)
-    assert "Caller ID: zero four one two, three four five, six seven eight" in first
+    assert "Caller ID: zero four nine one, five seven zero, one five six" in first
     ask = tools.call("book_inspection", {"listing": "HR-101", "time_code": "2026-10-17T10:00", "name": "Sam"}, ctx)
-    assert ask.startswith("Not booked yet") and "ending in six seven eight" in ask and tools.store.bookings() == []
+    assert ask.startswith("Not booked yet") and "ending in one five six" in ask and tools.store.bookings() == []
     out = tools.call("book_inspection", {"listing": "HR-101", "time_code": "2026-10-17T10:00", "phone_confirmed": True}, ctx)
-    assert out.startswith("Booked") and "mobile zero four one two, three four five, six seven eight" in out
+    assert out.startswith("Booked") and "mobile zero four nine one, five seven zero, one five six" in out
     out2 = tools.call("book_inspection", {"listing": "HR-201", "time_code": "2026-10-17T12:00", "name": "Sam"})
     assert "need the caller's mobile" in out2
 
 
 def test_a_spoken_number_must_be_read_back_before_booking(tools):
     ctx = {"call_id": "rb"}
-    out = tools.call("book_inspection", {"listing": "HR-102", "time_code": "2026-10-17T11:00", "name": "John Smith", "phone": "0404 154 887"}, ctx)
-    assert out.startswith("Not booked yet") and "zero four zero four, one five four, eight eight seven" in out
+    out = tools.call("book_inspection", {"listing": "HR-102", "time_code": "2026-10-17T11:00", "name": "John Smith", "phone": "0491 570 157"}, ctx)
+    assert out.startswith("Not booked yet") and "zero four nine one, five seven zero, one five seven" in out
     assert tools.store.bookings() == []
     assert tools.call("book_inspection", {"listing": "HR-102", "time_code": "2026-10-17T11:00", "phone_confirmed": "true"}, ctx).startswith("Booked")
     # confirmed once per call is enough for a later message
@@ -222,7 +222,7 @@ def test_assistant_tools_match_server_handlers(tmp_path, agency):
 # ---- memory and speech --------------------------------------------------------------
 def test_details_given_once_are_reused_in_the_same_call(tools):
     ctx = {"call_id": "call-A"}
-    out = tools.call("book_inspection", {"listing": "HR-101", "time_code": "2026-10-17T10:00", "name": "John Smith", "phone": "0415 157 772", "phone_confirmed": True}, ctx)
+    out = tools.call("book_inspection", {"listing": "HR-101", "time_code": "2026-10-17T10:00", "name": "John Smith", "phone": "0491 570 158", "phone_confirmed": True}, ctx)
     assert out.startswith("Booked") and "Don't ask for these again" in out
     # appraisal later in the same call: no name or phone passed, but an address is needed first
     ask = tools.call("take_message", {"reason": "Free appraisal of their home"}, ctx)
@@ -230,7 +230,7 @@ def test_details_given_once_are_reused_in_the_same_call(tools):
     ok = tools.call("take_message", {"reason": "Free appraisal of their home", "property_address": "5 Rose St, Mosman", "for_agent": "Sophie Tran"}, ctx)
     assert "Message saved for Sophie Tran" in ok
     msg = tools.store.messages()[0]
-    assert (msg["name"], msg["phone"]) == ("John Smith", "0415157772") and "5 Rose St, Mosman" in msg["reason"]
+    assert (msg["name"], msg["phone"]) == ("John Smith", "0491570158") and "5 Rose St, Mosman" in msg["reason"]
     # a different call starts with no details
     assert "need the caller's full name" in tools.call("book_inspection", {"listing": "HR-201", "time_code": "2026-10-17T12:00"}, {"call_id": "call-B"})
 
@@ -243,13 +243,13 @@ def test_email_is_remembered_and_used_for_confirmation(tools):
 
 
 def test_returning_caller_is_recognised_by_caller_id(tools):
-    tools.call("book_inspection", {"listing": "HR-101", "time_code": "2026-10-17T10:00", "name": "John Smith", "phone": "0415157772", "phone_confirmed": True}, {"call_id": "first"})
-    later = tools.call("get_listing_details", {"query": "Chatswood"}, {"call_id": "second", "caller_number": "+61415157772"})
+    tools.call("book_inspection", {"listing": "HR-101", "time_code": "2026-10-17T10:00", "name": "John Smith", "phone": "0491570158", "phone_confirmed": True}, {"call_id": "first"})
+    later = tools.call("get_listing_details", {"query": "Chatswood"}, {"call_id": "second", "caller_number": "+61491570158"})
     assert "Returning caller" in later and "John Smith" in later and "unit 7 at 42 Bayview Street" in later
-    again = tools.call("get_listing_details", {"query": "Chatswood"}, {"call_id": "second", "caller_number": "+61415157772"})
+    again = tools.call("get_listing_details", {"query": "Chatswood"}, {"call_id": "second", "caller_number": "+61491570158"})
     assert "Returning caller" not in again  # only mentioned once per call
     # and the name is now known, so booking needs no questions
-    assert tools.call("book_inspection", {"listing": "HR-201", "time_code": "2026-10-17T12:00", "phone_confirmed": True}, {"call_id": "second", "caller_number": "+61415157772"}).startswith("Booked")
+    assert tools.call("book_inspection", {"listing": "HR-201", "time_code": "2026-10-17T12:00", "phone_confirmed": True}, {"call_id": "second", "caller_number": "+61491570158"}).startswith("Booked")
 
 
 def test_voice_friendly_addresses_prices_and_times(tools, agency):
@@ -286,17 +286,17 @@ def test_waits_when_caller_trails_off(agency, tmp_path):
 # ---- how numbers are spoken and shown (from test-call feedback) -----------------
 def test_phone_numbers_are_spelled_digit_by_digit():
     from receptionist.agency import spoken_phone
-    assert spoken_phone("0404154887") == "zero four zero four, one five four, eight eight seven"
-    assert spoken_phone("+61 404 154 887".replace("+61 ", "0")) == "zero four zero four, one five four, eight eight seven"
+    assert spoken_phone("0491570157") == "zero four nine one, five seven zero, one five seven"
+    assert spoken_phone("+61 491 570 157".replace("+61 ", "0")) == "zero four nine one, five seven zero, one five seven"
     assert spoken_phone("") == ""
 
 
 def test_tool_results_never_contain_digit_phone_numbers(tools):
     ctx = {"call_id": "p1"}
-    out = tools.call("book_inspection", {"listing": "HR-102", "time_code": "2026-10-17T11:00", "name": "John Smith", "phone": "0404 154 887", "phone_confirmed": True}, ctx)
-    assert "zero four zero four, one five four, eight eight seven" in out and not re.search(r"\d{3}", out.split("Confirmation")[0])
+    out = tools.call("book_inspection", {"listing": "HR-102", "time_code": "2026-10-17T11:00", "name": "John Smith", "phone": "0491 570 157", "phone_confirmed": True}, ctx)
+    assert "zero four nine one, five seven zero, one five seven" in out and not re.search(r"\d{3}", out.split("Confirmation")[0])
     again = tools.call("get_listing_details", {"query": "Chatswood"}, ctx)
-    assert "0404" not in again
+    assert "0491" not in again
 
 
 def test_filler_lines_have_no_number_words_and_booking_has_none(tmp_path, agency):
@@ -315,7 +315,7 @@ def test_filler_lines_have_no_number_words_and_booking_has_none(tmp_path, agency
     assert "phone_confirmed" in by_name["take_message"]["function"]["parameters"]["properties"]
     assert {"Harbourside Realty", "Kendall Road", "Sophie Tran"} <= set(a["transcriber"]["keyterm"])
     prompt = a["model"]["messages"][0]["content"]
-    assert "digit by digit" in prompt and "acknowledge it" in prompt and "0415 157 772" not in prompt
+    assert "digit by digit" in prompt and "acknowledge it" in prompt and "0491 570 158" not in prompt
 
 
 def test_saved_transcript_uses_the_assistants_own_words(tmp_path):
