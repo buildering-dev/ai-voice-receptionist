@@ -2,7 +2,7 @@
 
 An AI phone assistant for **real estate agents**, built on [Vapi](https://vapi.ai). When an agent can't pick up (with a client, at an open home, in an appraisal), the call diverts to it instead of voicemail. It talks like a person, answers questions about the listings, **books inspections** into real open-home and private times, and takes the details so the agent can call straight back, flagging anything urgent like an offer. It can also run as the whole agency's reception line.
 
-https://github.com/user-attachments/assets/c38ff75a-edfa-47b2-9149-61500f1b2544
+https://github.com/user-attachments/assets/c1a45988-bb27-4bbe-80e2-b4eb8dc22463
 
 **Demo (4 min):** a real, unedited call with the assistant, then the page the agent sees afterwards. ([download the video](docs/demo.mp4))
 
@@ -32,13 +32,13 @@ This is the tool side of a call, replayed with `scripts/simulate_call.py`. Betwe
 Caller: What's the price guide for the Lavender Bay apartment?
 Tool:   unit 7 at 42 Bayview Street, Lavender Bay (HR-101) is for sale: 2 bedrooms, 2 bathrooms, 1 car space.
         Price: one point four five to one point five five million dollars. ...
-        Caller ID: zero four one two, three four five, six seven eight.
+        Caller ID: zero four nine one, five seven zero, one five six.
 
 Caller: Could I come by on Friday?
 Tool:   On Friday 16 October: private inspections every half hour from 10 am to 4:30 pm.
 
 Caller: The first one works. I'm Jordan Lee.
-Tool:   Not booked yet. Ask: "Is the number you're calling from, ending in six seven eight,
+Tool:   Not booked yet. Ask: "Is the number you're calling from, ending in one five six,
         the best one to reach you on?"
 
 Caller: Yes, that's fine.
@@ -51,7 +51,7 @@ Caller: And I'd like to put an offer in on the Willoughby house.
 Tool:   Message saved for Sophie Tran and flagged urgent.
 ```
 
-The caller gives their name once and never reads out their number: the server remembers both for the rest of the call, and recognises the number next time. Phone numbers come back already spelled out ("zero four one two…") so the voice reads them digit by digit, the way a person would.
+The caller gives their name once and never reads out their number: the server remembers both for the rest of the call, and recognises the number next time. Phone numbers come back already spelled out ("zero four nine one…") so the voice reads them digit by digit, the way a person would.
 
 The agent gets a Telegram message for the booking, another for each call-back (urgent ones flagged), and a short summary when the call ends.
 
