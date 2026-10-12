@@ -16,7 +16,7 @@ import httpx
 
 URL = os.getenv("SERVER", "http://localhost:8000") + "/vapi/webhook"
 HEADERS = {"X-Vapi-Secret": os.getenv("WEBHOOK_SECRET", "")}
-CALL = {"id": "sim-001", "customer": {"number": "+61412345678"}}
+CALL = {"id": "sim-001", "customer": {"number": "+61491570156"}}
 
 
 def tool(name: str, args: dict) -> str:
