@@ -2,9 +2,9 @@
 
 An AI phone assistant for **real estate agents**, built on [Vapi](https://vapi.ai). When an agent can't pick up (with a client, at an open home, in an appraisal), the call diverts to it instead of voicemail. It talks like a person, answers questions about the listings, **books inspections** into real open-home and private times, and takes the details so the agent can call straight back, flagging anything urgent like an offer. It can also run as the whole agency's reception line.
 
-[![Watch the 4-minute demo: a real call, then the agent's view](docs/demo-thumbnail.png)](docs/demo.mp4)
+https://github.com/user-attachments/assets/c38ff75a-edfa-47b2-9149-61500f1b2544
 
-**[▶ Watch the demo](docs/demo.mp4)** (4 min): a real, unedited call with the assistant, then the page the agent sees afterwards.
+**Demo (4 min):** a real, unedited call with the assistant, then the page the agent sees afterwards. ([download the video](docs/demo.mp4))
 
 ## What it does
 
