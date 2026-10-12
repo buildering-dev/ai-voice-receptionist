@@ -1,0 +1,6 @@
+.env
+.assistant_id
+data/*.db
+__pycache__/
+.pytest_cache/
+data/last_call_report.json
