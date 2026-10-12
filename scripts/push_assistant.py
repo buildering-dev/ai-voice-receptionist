@@ -47,7 +47,16 @@ def main() -> int:
 
     # If Vapi rejects an optional extra (voice, pronunciation fixes, turn-taking tweaks), retry without it
     # so the assistant still points at the live server, and say clearly what was dropped.
+    def drop_delayed(b: dict) -> None:
+        for t in b["model"].get("tools", []):
+            msgs = [m for m in t.get("messages", []) if m.get("type") != "request-response-delayed"]
+            if msgs:
+                t["messages"] = msgs
+            else:
+                t.pop("messages", None)
+
     fallbacks = [
+        ("slow-server lines on save tools", drop_delayed),
         ("speech-recognition name hints", lambda b: b["transcriber"].pop("keyterm", None)),
         ("pronunciation replacements", lambda b: b["voice"].pop("chunkPlan", None)),
         ("custom voice (using Vapi's default voice)", lambda b: b.update(voice={"provider": "vapi", "voiceId": "Clara"})),
