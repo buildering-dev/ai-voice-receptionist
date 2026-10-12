@@ -53,7 +53,7 @@ TOOL_SPECS = [
             },
             "required": ["listing", "time_code"],
         },
-        "say": "Okay, just a tick.",  # neutral, so it never talks over a change of mind
+        "slow_say": "Bear with me, just saving that.",
     },
     {
         "name": "cancel_inspection",
@@ -67,7 +67,7 @@ TOOL_SPECS = [
             },
             "required": [],
         },
-        "say": "Okay, just a tick.",
+        "slow_say": "Bear with me, just a moment.",
     },
     {
         "name": "take_message",
@@ -85,13 +85,25 @@ TOOL_SPECS = [
             },
             "required": ["reason"],
         },
-        "say": "Okay, just a tick.",
+        "slow_say": "Bear with me, just a moment.",
     },
 ]
 
 
 _ONES = "zero one two three four five six seven eight nine ten eleven twelve thirteen fourteen fifteen sixteen seventeen eighteen nineteen".split()
 _TENS = "_ _ twenty thirty forty fifty sixty seventy eighty ninety".split()
+
+
+def tool_messages(spec: dict) -> list[dict]:
+    """Lookups get a short line while they run ("Let me check the times"). Saves (book, cancel, message)
+    are quick, so they stay silent and only speak up if the server is slow, which stops the same filler
+    line repeating through a call."""
+    msgs = []
+    if spec.get("say"):
+        msgs.append({"type": "request-start", "content": spec["say"]})
+    if spec.get("slow_say"):
+        msgs.append({"type": "request-response-delayed", "content": spec["slow_say"], "timingMilliseconds": 2500})
+    return msgs
 
 
 def number_words(n: int) -> str:
@@ -221,7 +233,7 @@ def build_assistant(settings: Settings, agency: Agency | None = None) -> dict:
             "type": "function",
             "function": {"name": t["name"], "description": t["description"], "parameters": t["parameters"]},
             "server": server,
-            **({"messages": [{"type": "request-start", "content": t["say"]}]} if t.get("say") else {}),
+            **({"messages": tool_messages(t)} if tool_messages(t) else {}),
         }
         for t in TOOL_SPECS
     ]
