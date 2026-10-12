@@ -305,9 +305,11 @@ def test_filler_lines_have_no_number_words_and_booking_has_none(tmp_path, agency
     for t in by_name.values():
         for m in t.get("messages", []):
             assert not re.search(r"\b(one|two|three|four|five|six|seven|eight|nine|ten)\b", m["content"], re.I)
-    # booking and messages only get a neutral line, so it never talks over a change of mind
-    for n in ("book_inspection", "take_message"):
-        assert not re.search(r"book|pass|now", by_name[n]["messages"][0]["content"], re.I)
+    # saves are silent unless the server is slow, so no filler line repeats through the call
+    for n in ("book_inspection", "take_message", "cancel_inspection"):
+        assert [m["type"] for m in by_name[n]["messages"]] == ["request-response-delayed"]
+    lines = [m["content"] for t in by_name.values() for m in t.get("messages", []) if m["type"] == "request-start"]
+    assert len(lines) == len(set(lines)) == 2
     assert "model-output" in a["clientMessages"]
     assert "phone_confirmed" in by_name["book_inspection"]["function"]["parameters"]["properties"]
     assert "phone_confirmed" in by_name["take_message"]["function"]["parameters"]["properties"]
